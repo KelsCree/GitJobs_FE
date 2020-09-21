@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="app.js" defer></script>
+    <link rel="stylesheet" href="app.css">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text&display=swap" rel="stylesheet">
+    <title>Job Page</title>
+</head>
+<body>
+    <header id="top-section">
+        <h1>Git Jobs</h1>
+        <h2>Are you ready to git a job?</h2>
+    </header> 
+        
+        <div id="create-form">
+            <h2 id='form-heading'>Create A Job</h2>
+            <form id="create-a-job">
+                <label for="title-field">Title:</label>
+                <input type="text" name="title" id="title-field" required>
+                <label for="company-field">Company:</label>
+                <input type="text" name="company" id="company-field" required>
+                <label for="location-field">Location:</label>
+                <input type="text" name="location" id="location-field">
+                <label for="company_url-field">Company_url:</label>
+                <input type="text" name="company_url" id="company_url-field">
+                <label for="logo_url-field">Logo_url:</label>
+                <input type="text" name="logo_url" id="logo_url-field">
+                <input type="submit">
+            </form>
+            <br>
+        </div>
+         
+   
+    <h3>List of All Jobs:</h3> 
+    <div id="job-container">
+    
+    </div>
+    <footer>
+        <a id="topbutton" href="#top">return to top </a>
+        <p>created by: Jenn Grenier API source:</p>
+    </footer>
+</body>
+</html>
