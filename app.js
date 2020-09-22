@@ -1,27 +1,30 @@
-const base_URL = 'http://localhost:3000/jobs'
-const jobsContainer = document.querySelector('#job-container')
-const form = document.querySelector('#create-a-job')
-const likes = 0
+const baseURL = 'http://localhost:3000'
+const jobsURL = `${baseURL}/jobs`
+const createJobForm = document.querySelector('#create-a-job')
+let likes = 0
 
-fetch(base_URL)
-    .then(response => response.json())
-    .then(jobs => createJobCard(jobs))
+fetch(jobsURL)
+    .then(parseJSON)
+    .then(showJobCards)
+
     
-function createJobCard(jobs){
-    jobs.forEach(createJobCard)
+function showJobCards(jobs) {
+    jobs.forEach(job => showJobCard(job, jobsContainer))
+}
 
-function createJobCard(job){
+function showJobCard(job, jobsContainer) {
         const jobCard = document.createElement('div')
         const logo = document.createElement('a')
         const jobTitle = document.createElement('h3')
         const jobCompany = document.createElement('p')
         const jobLocation = document.createElement('p')
         const deleteButton = document.createElement('button')
-        const likeButton = document.createElement('button')
-        const jobLikes = document.createElement('p')
-        const updateButton = document.createElement('input')
-        const jobTitleField = document.createElement('input')
 
+        const jobLikes = document.createElement('p')
+
+        const jobTitleField = document.createElement('input')
+        const likeButton = createLikeButton(job, jobLikes)
+        const updateButton = createUpdateButton(job, title)
 
         jobLikes.textContent =  `${likes} likes`
         jobTitle.textContent = job.title
@@ -33,8 +36,7 @@ function createJobCard(job){
         jobCompany.innerText = job.company
         jobLocation.innerText = job.location
         deleteButton.textContent = "Delete Job"
-        updateButton.type = 'submit'
-        likeButton.textContent ="Like Job"
+
         jobTitleField.textContent = "title"
 
         jobCard.append(
@@ -48,14 +50,8 @@ function createJobCard(job){
             likeButton,
             deleteButton)
         jobsContainer.append(jobCard) 
-        
-        updateButton.addEventListener('submit', (event) => updateTitle(event, job, title))
 
-        likeButton.addEventListener('click', ()=> {
-            job.likes++
-            jobLikes.textContent = `${job.likes} likes`
-            console.log(job)
-        })
+
 
         deleteButton.addEventListener('click', () => {
             deleteJob(job)
@@ -63,14 +59,33 @@ function createJobCard(job){
     })
 }
 
-function deleteJob(job){
-    fetch(`${base_URL}/${job.id}`, {method: 'DELETE'})
+function incrementLikes(job, jobLikes) {
+        job.likes++
+        jobLikes.textContent = `${job.likes} likes`
+        console.log(job)
+}
+
+function deleteJob(job) {
+    fetch(`${jobsURL}/${job.id}`, {method: 'DELETE'})
         .then(response => response.json())
         .then(console.log)
 }
-form.addEventListener('submit', submitForm)
 
-function submitForm(event){
+function createLikeButton(job, jobLikes) {
+    const likeButton = document.createElement('button')
+    likeButton.textContent ="Like Job"
+    likeButton.addEventListener('click', () => incrementLikes(job, jobLikes))
+    return likeButton
+}
+
+function createUpdateButton(job, title) {
+    const updateButton = document.createElement('input')
+    updateButton.addEventListener('submit', event => updateTitle(event, job, title))
+    updateButton.type = 'submit'
+    return updateButton
+}
+
+function submitForm(event) {
     event.preventDefault()
 
     const formData = new FormData(event.target)
@@ -79,16 +94,16 @@ function submitForm(event){
     const location = formData.get('location')
     const company_url = formData.get('company_url')
     const logo_url = formData.get('logo_url')
-    const jobs = {
+    const job = {
         title, 
         company, 
         location,
         company_url,
         logo_url }
+        const jobsContainer = document.querySelector('#job-container')
+        showJobCard(job, jobsContainer)
 
-    createJobCard(jobs)
-
-    fetch(base_URL, {
+    fetch(jobsURL, {
         method: 'POST', 
         headers: { 'Content-type' : 'application/json'},
         body: JSON.stringify({
@@ -100,7 +115,6 @@ function submitForm(event){
         })
     })
 }
-}
 
 function updateTitle(event, job, titleElement) {
     event.preventDefault()
@@ -111,7 +125,7 @@ console.log(event.target)
 
     titleElement.textContent = title
 
-    fetch(`${base_URL}/${job.id}`, {
+    fetch(`${jobsURL}/${job.id}`, {
         method: 'PATCH',
         headers: {
             'Accept': 'application/json',
@@ -120,4 +134,8 @@ console.log(event.target)
         body: JSON.stringify( {title})
     }) .then(response => response.json())
         .then(console.log)
+}
+
+function parseJSON(response) {
+    return response.json()
 }
